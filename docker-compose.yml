@@ -1,8 +1,10 @@
 version: '3'
 services: 
   db:
-    image: postgres 
+    image: postgres:9.3
     container_name: db
+    ports: 
+      - "8081:5432"
     env_file: .env
   web:
     build: .
