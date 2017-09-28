@@ -1,0 +1,17 @@
+version: '3'
+services: 
+  db:
+    image: postgres 
+    container_name: db
+    env_file: .env
+  web:
+    build: .
+    container_name: web
+    ports: 
+      - "3000:3000"
+    volumes:            
+      - .:/myapp
+    command: sh boostrap.sh
+    env_file: .env
+    links:
+      - db

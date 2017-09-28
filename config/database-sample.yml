@@ -1,0 +1,29 @@
+development:
+  adapter:  postgresql
+  encoding: unicode
+  pool:     25
+  database: lab01-development
+  username: ENV['POSTGRES_USER']
+  password: ENV['POSTGRES_PASSWORD']
+  host:     ENV['POSTGRES_URL']
+  template: template0
+
+test:
+  adapter:  postgresql
+  encoding: unicode
+  pool:     25
+  database: lab01-test
+  username: ENV['POSTGRES_USER']
+  password: ENV['POSTGRES_PASSWORD']
+  host:     ENV['POSTGRES_URL']
+  template: template0
+
+staging:
+  adapter:  postgresql
+  encoding: unicode
+  pool:     25
+  database: <%= ENV['PG_DATABASE'] %>
+  username: <%= ENV['PG_USERNAME'] %>
+  password: <%= ENV['PG_PASSWORD'] %>
+  host:     <%= ENV['PG_HOST'] %>
+  template: template0
