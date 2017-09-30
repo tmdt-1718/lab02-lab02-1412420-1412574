@@ -50,14 +50,6 @@ Link ảnh GIF demo ứng dụng:
 
 Tạo ảnh GIF với chương trình [LiceCap](http://www.cockos.com/licecap/).
 
-## For developer 
-
-1. clone source from [https://github.com/tmdt-1718/lab01-1412420-1412574.git](https://github.com/tmdt-1718/lab01-1412420-1412574.git)
-2. install [docker](https://docs.docker.com/engine/installation/)
-3. config database follow `.database-sample.yml`
-4. config env variable follow `.env-sample`
-5. run `docker-compose up` for build docker
-6. run `rake db:migrate` for migrate database
 
 ## License
 

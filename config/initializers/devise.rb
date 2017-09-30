@@ -248,6 +248,9 @@ Devise.setup do |config|
   config.sign_out_via = :delete
 
   # ==> OmniAuth
+  config.omniauth :facebook, ENV['FACEBOOK_CLIENT'], ENV['FACEBOOK_SECRET']
+  config.omniauth :google_oauth2, ENV['GOOGLE_CLIENT'], ENV['GOOGLE_SECRET'], {}
+  # config.omniauth :twitter, 'Nz1E9B12cYk3gqOA0vir1WPqU', 'DdyqARDGpB8gCQZ7BZyKCR64ivnuGIR5i9wP6hkA1F5c8uxrAw'
   # Add a new OmniAuth provider. Check the wiki for more information on setting
   # up on your models and hooks.
   # config.omniauth :github, 'APP_ID', 'APP_SECRET', scope: 'user,public_repo'
