@@ -25,21 +25,19 @@
 					#myNavbar.collapse.navbar-collapse
 						%ul.nav.navbar-nav
 							%li{:class => "#"}
-								%a{:href => "/"} Home
+								= link_to I18n.t('menu.home'), root_path
 							%li{:class => "#"}
-								%a{:href => "/albums"} Albums
+								= link_to I18n.t('menu.albums'), root_path
 							%li{:class => "#"}
-								%a{:href => "/posts"} Blogs
+								= link_to I18n.t('menu.blogs'), root_path
 							%li{:class => "#"}
-								%a{:href => "/about"} About
+								= link_to I18n.t('menu.about'), root_path
 						%ul#nav-user-info.nav.navbar-nav.navbar-right
-							%li
-								%a{:href => ""}
-									%i.fa.fa-user{"aria-hidden" => "true"}
-									Me
-							%li
-								%a{:href => "/sessions/logout"}
-									%i.fa.fa-sign-out{"aria-hidden" => "true"}
-							/
-								<li><a href="" data-toggle="modal" data-target="#modal-login" ><i class="fa fa-sign-in" aria-hidden="true"></i>	Login </a></li>
-								<li><a href=""  data-toggle="modal" data-target="#modal-signup"><i class="fa fa-user" aria-hidden="true"></i> Sign Up</a></li>
+							- if user_signed_in?
+								%li
+									%a{:href => ""}
+										%i.fa.fa-user{"aria-hidden" => "true"}
+										= current_user.name
+								%li
+									= link_to destroy_user_session_path, method: :delete do
+										%i.fa.fa-sign-out{"aria-hidden" => "true"}

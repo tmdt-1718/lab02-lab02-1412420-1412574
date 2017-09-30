@@ -24,6 +24,11 @@ gem 'haml-rails'
 gem 'kaminari'
 gem 'ransack'
 gem 'jquery-rails'
+gem "font-awesome-rails"
+
+
+#omniauth
+gem 'omniauth-facebook'
 
 # linter
 gem 'rubocop', require: false
