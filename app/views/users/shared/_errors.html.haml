@@ -1,0 +1,4 @@
+#error_explanation
+  %ul
+    - flash.each do |name, msg|
+      = content_tag :li, msg,class:'message-error', id: "flash_#{name}" if msg.is_a?(String)

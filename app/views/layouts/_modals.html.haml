@@ -1,0 +1,86 @@
+/ Modal
+#modal-login.modal.fade{:role => "dialog"}
+  .modal-dialog
+    / Modal content
+    .modal-content
+      .modal-header
+        %button.close{"data-dismiss" => "modal", :type => "button"} ×
+        %h4
+          %i.fa.fa-lock{"aria-hidden" => "true"}
+          Login
+      .modal-body{:style => "padding:30px"}
+        %form
+          .form-group
+            %label{:for => "usrname"}
+              %i.fa.fa-envelope{"aria-hidden" => "true"}
+              Email
+            %input#email-user.form-control{:name => "email", :placeholder => "Enter email", :required => "", :type => "text"}/
+          .form-group
+            %label{:for => "psw"}
+              %i.fa.fa-key{"aria-hidden" => "true"}
+              Password
+            %input#password-user.form-control{:name => "password", :placeholder => "Enter password", :required => "", :type => "password"}/
+          #errors-lg
+          %button#form-login-target.btn.btn-success.btn-block{:type => "submit"}
+            %i.fa.fa-power-off{"aria-hidden" => "true"}
+            Login
+      .modal-footer
+        %button.btn.btn-danger.btn-default.pull-left{"data-dismiss" => "modal", :type => "submit"}
+          %i.fa.fa-times{"aria-hidden" => "true"}
+          Cancel
+        %p
+          Not a member?
+          %a{:href => "#"} Sign Up
+        %p
+          Forgot
+          %a{:href => "#"} Password?
+/ Modal
+#modal-signup.modal.fade{:role => "dialog"}
+  .modal-dialog
+    / Modal content
+    .modal-content
+      .modal-header
+        %button.close{"data-dismiss" => "modal", :type => "button"} ×
+        %h4.col-xs-4
+          %i.fa.fa-user{"aria-hidden" => "true"}
+          Signup
+        #success-su.col-xs-7
+      .modal-body{:style => "padding:20px 20px 40px"}
+        %form
+          .form-group
+            %label{:for => "name-su"}
+              %i.fa.fa-user{"aria-hidden" => "true"}
+              Name
+            %input#name-su.form-control{:name => "name", :placeholder => "Enter name", :type => "text"}/
+            %ul#errors-su-name.erorrs-su
+          .form-group
+            %label{:for => "student-id"}
+              %i.fa.fa-id-card{"aria-hidden" => "true"}
+              Student Id
+            %input#student-id.form-control{:name => "student_id", :placeholder => "Enter name", :type => "text"}/
+            %ul#errors-su-student_id.erorrs-su
+          .form-group
+            %label{:for => "email-su"}
+              %i.fa.fa-envelope{"aria-hidden" => "true"}
+              Email
+            %input#email-su.form-control{:name => "email", :placeholder => "Enter email", :type => "email"}/
+            %ul#errors-su-email.erorrs-su
+          .form-group
+            %label{:for => "password-su"}
+              %i.fa.fa-key{"aria-hidden" => "true"}
+              Password
+            %input#password-su.form-control{:name => "password", :placeholder => "Enter password", :type => "password"}/
+            %ul#errors-su-password.erorrs-su
+          .form-group
+            %label{:for => "repassword-su"}
+              %i.fa.fa-key{"aria-hidden" => "true"}
+              Confirm password
+            %input#repassword-su.form-control{:name => "password_confirmation", :placeholder => "Confirmation password", :type => "password"}/
+            %ul#errors-su-password_confirmation.erorrs-su
+          .form-group
+            %label{:for => "team_id"} Your team:
+            %select#team_id.form-control{:name => "team_id"}
+              %option{:value => "1"} Team 1
+          %button#form-signup-target.btn.btn-success.btn-block{:type => "submit"}
+            %i.fa.fa-power-off{"aria-hidden" => "true"}
+            Signup

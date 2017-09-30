@@ -1,10 +1,49 @@
 !!!
 %html
   %head
-    %meta{:content => "text/html; charset=UTF-8", "http-equiv" => "Content-Type"}/
-    %title Myapp
+    %meta{:content => "text/html; charset=UTF-8", "http-equiv" => "Content-Type"}
+    %title Web
+    / Latest compiled and minified CSS
+    %link{:href => "https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css", :rel => "stylesheet"}
+    / jQuery library
+    %script{:src => "https://ajax.googleapis.com/ajax/libs/jquery/3.2.0/jquery.min.js"}
+    / Latest compiled JavaScript
+    %script{:src => "https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"}
+    %meta{:content => "width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no", :name => "viewport"}
+    = stylesheet_link_tag 'application', media: 'all', data: {'turbolinks-track' => true}
+    = javascript_include_tag 'application', data: {'turbolinks-track' => true}
     = csrf_meta_tags
-    = stylesheet_link_tag    'application', media: 'all', 'data-turbolinks-track': 'reload'
-    = javascript_include_tag 'application', 'data-turbolinks-track': 'reload'
   %body
-    = yield
+    = render "layouts/header"
+    #main
+      #content-body.container
+        = render "layouts/sidebar"
+        #main-content.col-md-9
+          = yield
+    = render "layouts/footer"
+    = render "layouts/modals"
+    :javascript
+      var topHeader = $("#top-header");
+      var topHeight = topHeader.outerHeight();
+      var nav = $("#nav-top");    
+      $(window).scroll(function(e){
+        var top = (window.pageYOffset || document.scrollTop)  - (document.clientTop || 0);
+        if(top >= topHeight) {
+          nav.addClass("fixed-nav-nar green-bg");
+        }else {
+          nav.removeClass("fixed-nav-nar green-bg");
+        }
+      });
+
+      (function(){
+        var closeBtn = document.getElementById("close");
+        var openBtn = document.getElementById("open");
+        var leftMenu = document.getElementById("left-menu");
+        var btnToggle = document.get
+        closeBtn.addEventListener('click',function(e){
+          leftMenu.style.display = "none";
+        })
+        openBtn.addEventListener('click',function(e){
+          leftMenu.style.display = "block";
+        })
+      })();

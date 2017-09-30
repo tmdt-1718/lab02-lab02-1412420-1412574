@@ -1,0 +1,8 @@
+.login-page
+  .form
+    = form_for(resource, as: resource_name, url: password_path(resource_name), html: { method: :put }) do |f|
+      = devise_error_messages!
+      = f.password_field :password, placeholder: 'new password', autofocus: true, autocomplete: "off"
+      = f.password_field :password_confirmation, placeholder: 'confirm new password', autocomplete: "off"
+      = f.button "Reset password"
+    = render "users/shared/links"

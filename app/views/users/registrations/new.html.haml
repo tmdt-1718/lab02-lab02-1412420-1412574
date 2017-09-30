@@ -1,0 +1,10 @@
+.login-page
+  .form
+    = render 'users/shared/errors'
+    = form_for(resource, as: resource_name, url: registration_path(resource_name)) do |f|
+      = devise_error_messages!
+      = f.email_field :email, placeholder: 'email', autofocus: true
+      = f.password_field :password, placeholder: 'password', autocomplete: 'off'
+      = f.password_field :password_confirmation, placeholder: 'password confirmation', autocomplete: "off"
+      = f.button "Sign up"
+    = render "users/shared/links"
