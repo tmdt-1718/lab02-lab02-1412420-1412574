@@ -8,6 +8,8 @@ class User < ApplicationRecord
   
   enum role: [:user, :admin]
 
+  mount_uploader :avatar, AvatarUploader
+
   def self.from_omniauth(auth)
     email = auth.info&.email 
     user = User.find_by_email(email)

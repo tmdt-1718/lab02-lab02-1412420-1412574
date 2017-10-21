@@ -1,0 +1,35 @@
+// variable
+$primary-color: #9E7CC1;
+$violet-color: #8a6aaf;
+$bg-color: #f0f3f3;
+$white-color: #fff;
+$gray-color-1a: #EDF1F2;
+$gray-color-1b: #f6f8f8;
+$gray-color-1c: #efefef;
+$gray-color-1d: #ddd;
+$gray-color-1e: #e0e7e8;
+$gray-color-1f: #f5f5f5;
+$gray-color-1g: #777;
+$gray-color-1h: #999;
+$black-color: #000;
+$black-color-1a: #333;
+$red-color-1a: #d9534f;
+$green-color-1a: #5cb85c;
+
+$demi-rose: #f2dede;
+$demi-green: #C1E1F1;
+@mixin transform($in) {
+  -webkit-transform: $in;
+     -moz-transform: $in;
+      -ms-transform: $in;
+       -o-transform: $in;
+          transform: $in;
+}
+
+@mixin transition($in) {
+  -webkit-transition: $in;
+     -moz-transition: $in;
+      -ms-transition: $in;
+       -o-transition: $in;
+          transition: $in;
+}
