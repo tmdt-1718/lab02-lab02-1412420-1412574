@@ -4,7 +4,7 @@ git_source(:github) do |repo_name|
   repo_name = "#{repo_name}/#{repo_name}" unless repo_name.include?("/")
   "https://github.com/#{repo_name}.git"
 end
-
+ruby '2.3.3'
 gem 'rails', '~> 5.1.4'
 gem 'pg', '~> 0.18.4'
 gem 'puma', '~> 3.7'
@@ -25,7 +25,10 @@ gem 'kaminari'
 gem 'ransack'
 gem 'jquery-rails'
 gem "font-awesome-rails"
-
+gem 'counter_culture', '~> 1.8'
+gem 'summernote-rails'
+gem "breadcrumbs_on_rails"
+gem 'faker'
 
 #omniauth
 gem 'omniauth-facebook'
@@ -43,6 +46,11 @@ gem 'debride'
 gem 'draper'
 gem 'active_model_serializers', '~> 0.10.2'
 gem 'devise'
+
+#uploader
+gem 'carrierwave'
+gem 'mini_magick'
+gem 'cloudinary'
 
 group :development do
   gem 'pry-rails'
@@ -64,7 +72,6 @@ group :development, :test, :staging do
   gem 'factory_girl_rails'
   gem 'database_cleaner'
   gem 'shoulda-matchers', '~> 3.0'
-  gem 'faker'
 end
 
 # Windows does not include zoneinfo files, so bundle the tzinfo-data gem

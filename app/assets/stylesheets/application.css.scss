@@ -12,10 +12,12 @@
  * It is generally better to create a new file per style scope.
  *
  *= require reset
- *= "bootstrap-sprockets"
- *= "bootstrap"
- *= require style
- *= require_self
  *= require font-awesome
  */
+ 
+ @import "bootstrap-sprockets";
+ @import "bootstrap";
 
+ @import "variables";
+ @import "components";
+ @import "custom";
