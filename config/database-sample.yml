@@ -1,0 +1,25 @@
+default: &default
+  adapter: postgresql
+  encoding: unicode
+  pool: 25
+
+development:
+  <<: *default
+  database: lab01-development
+  username: <%= ENV['POSTGRES_USER'] %>
+  password: <%= ENV['POSTGRES_PASSWORD'] %>
+  host:     <%= ENV['POSTGRES_HOST'] %>
+  
+test:
+  <<: *default
+  database: lab01-test
+  username: <%= ENV['POSTGRES_USER'] %>
+  password: <%= ENV['POSTGRES_PASSWORD'] %>
+  host:     <%= ENV['POSTGRES_HOST'] %>
+
+staging:
+  <<: *default
+  database: lab01-staging
+  username: <%= ENV['POSTGRES_USER'] %>
+  password: <%= ENV['POSTGRES_PASSWORD'] %>
+  host:     <%= ENV['POSTGRES_HOST'] %>

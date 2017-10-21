@@ -1,0 +1,43 @@
+%header#header
+	#top-header
+		#social.container
+			#social-list.col-md-6.col-md-offset-6.col-xs-12
+				%a.logo.green-color{:href => "#"}
+					%i.fa.fa-facebook{"aria-hidden" => "true"}
+				%a.logo.green-color{:href => "#"}
+					%i.fa.fa-twitter{"aria-hidden" => "true"}
+				%a.logo.green-color{:href => "#"}
+					%i.fa.fa-tumblr{"aria-hidden" => "true"}
+		#banner
+			#logo
+				%a{:href => "#"}
+					= image_tag 'manu.png', alt: 'logo-img'
+	#nav-top
+		#nav-top.container
+			%nav#nav-custom.navbar.navbar-static-top.navbar-toggleable-md.navbar-default.bg-faded
+				.container-fluid
+					.navbar-header
+						%button.navbar-toggle{"data-target" => "#myNavbar", "data-toggle" => "collapse", :type => "button"}
+							%span.icon-bar
+							%span.icon-bar
+							%span.icon-bar
+						%a.navbar-brand{:href => "#"}  
+					#myNavbar.collapse.navbar-collapse
+						%ul.nav.navbar-nav
+							%li{:class => "#"}
+								= link_to I18n.t('menu.home'), root_path
+							%li{:class => "#"}
+								= link_to I18n.t('menu.albums'), root_path
+							%li{:class => "#"}
+								= link_to I18n.t('menu.blogs'), root_path
+							%li{:class => "#"}
+								= link_to I18n.t('menu.about'), root_path
+						%ul#nav-user-info.nav.navbar-nav.navbar-right
+							- if user_signed_in?
+								%li
+									%a{:href => ""}
+										%i.fa.fa-user{"aria-hidden" => "true"}
+										= current_user.name
+								%li
+									= link_to destroy_user_session_path, method: :delete do
+										%i.fa.fa-sign-out{"aria-hidden" => "true"}

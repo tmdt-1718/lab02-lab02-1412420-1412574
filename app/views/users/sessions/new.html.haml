@@ -1,0 +1,13 @@
+.login-page
+  .form
+    = render 'users/shared/errors'
+    = form_for(resource, as: resource_name, url: session_path(resource_name), class: 'register-form') do |f|
+      = f.email_field :email, placeholder: 'email', autofocus: true
+      = f.password_field :password, placeholder: 'password', autocomplete: "off"
+      - if devise_mapping.rememberable?
+        %div
+          %p.chkbox-remember
+            = f.check_box :remember_me, id: "remember_me"
+            %label{:for => "remember_me"} Remember me
+      = f.button "Log in"
+    = render "users/shared/links"
