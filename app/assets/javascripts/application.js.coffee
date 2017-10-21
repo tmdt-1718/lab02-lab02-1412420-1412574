@@ -14,6 +14,14 @@
 #= require jquery
 #= require jquery_ujs
 #= require bootstrap
+#= require summernote
+#= require selectize
 #= require turbolinks
 #= require display
 #= require style
+#= require modal
+
+document.addEventListener 'turbolinks:load', ->
+  Display.initDisplay()
+  Style.openPopUpProfile();
+  Modal.initPopUp();

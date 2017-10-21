@@ -1,1 +1,97 @@
-Index page
+.sub-menu
+  #selection-tools.col-md-offset-3.col-sm-offset-3
+    %button#btn-sync.btn-standard.btn-reload
+      %i.fa.fa-refresh{"aria-hidden" => "true"}
+
+.main-content
+  .left-main-content.col-md-3
+    .function-use
+      %button#btn-compose-message.btn-standard.btn-compose{"data-target" => "#send-message-modal", "data-toggle" => "modal"} Compose
+  
+  .center-main-content.col-md-9
+    .tab-content-c
+      %ul#tab-selection.nav.nav-tabs
+        %li.active
+          %a{"data-toggle" => "tab", :href => "#r-messages"}
+            %i.fa.fa-envelope-open{"aria-hidden" => "true"}
+            %span.hidden-res Received Messages
+        %li
+          %a{"data-toggle" => "tab", :href => "#s-messages"}
+            %i.fa.fa-envelope{"aria-hidden" => "true"}
+            %span.hidden-res Sent Messages
+        %li
+          %a{"data-toggle" => "tab", :href => "#users"}
+            %i.fa.fa-users{"aria-hidden" => "true"}
+            %span.hidden-res Users
+      #tab-selection-content.tab-content
+        #r-messages.tab-pane.fade.in.active
+          %ul#list-r-messages.list-messages
+            {{#each rMessages as |value|}}
+            = succeed "{{" do
+              %li.message.message-receive.message-unread{:class => "{{#unless value.read}} {{/unless}}"}
+            .date
+              %span {{ getDate value.time }}
+              %span.small {{ getMonth value.time }}
+            %p.message-title
+              From {{ value.sName }}
+              %span.status{:id => "r-status-{{ value.uid }}"}
+                {{#if value.read }}
+                %i.fa.fa-envelope-open-o{"aria-hidden" => "true"}
+                {{else}}
+                %i.fa.fa-envelope-o{"aria-hidden" => "true"}
+                {{/if}}
+              %time.timeago{:datetime => "{{ value.time }}"} {{ value.time }}
+              %i.fa.fa-globe{"aria-hidden" => "true"}
+            %p.message-content
+              {{{ truncatise value.message }}}
+          {{/each}}
+          {{!--  --}}
+          
+          {{!--  --}}
+        #s-messages.tab-pane.fade
+          %ul.list-messages
+            {{#each sMessages as |value|}}
+            = succeed "{{" do
+              %li.message.message-send.message-unread{:class => "{{#unless value.read}} {{/unless}}"}
+            .date
+              %span 13
+              %span.small May
+            %p.message-title
+              To {{ value.rName }}
+              %span.status
+                {{#if value.read }}
+                %i.fa.fa-envelope-open-o{"aria-hidden" => "true"}
+                {{else}}
+                %i.fa.fa-envelope-o{"aria-hidden" => "true"}
+                {{/if}}
+              %time{:datetime => "{{ value.time }}"} {{ getStandardTime value.time }}
+              {{#if value.read }}
+              Seen
+              %time.timeago{:datetime => "{{ value.readTime }}"} {{ value.rTime }}
+              {{/if}}
+              %i.fa.fa-globe{"aria-hidden" => "true"}
+            %p.message-content
+              {{{ truncatise value.message }}}
+          {{/each}}
+          {{!--  --}}
+          
+          {{!--  --}}
+        #users.tab-pane.fade
+          %ul.list-users
+            {{#each users as |user| }}
+            %li.user
+              .avatar-user
+                %img{:src => "{{ user.avatar }}"}
+                %p.user-content
+                  %a{:href => "#"} {{ user.name }}
+                {{#if user.isFriend }}
+                %button.btn-friend.btn-friend-remove{"data-id" => "{{ user.id }}", "data-sign" => "{{ user.isFriend }}", "data-user" => "{{ ../currentUser.id }}"}
+                  %p Remove
+                {{else}}
+                %button.btn-friend.btn-friend-add{"data-id" => "{{ user.id }}", "data-sign" => "{{ user.isFriend }}", "data-user" => "{{ ../currentUser.id }}"}
+                  %p Add
+                {{/if}}
+              {{/each}}
+
+
+= render 'modals'

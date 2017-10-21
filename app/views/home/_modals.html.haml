@@ -1,0 +1,45 @@
+-# MODAL MESSAGE
+#send-message-modal.modal.fade{"aria-hidden" => "true", :role => "dialog", :tabindex => "-1"}
+  .modal-dialog{:role => "document"}
+    .modal-content
+      .modal-header
+        %h5#modal-title.modal-title New message
+        %button.close{"aria-label" => "Close", "data-dismiss" => "modal", :type => "button"}
+          %span{"aria-hidden" => "true"} ×
+      .modal-body
+        %form
+          .form-group
+            %label{:for => "usr"} Recipient:
+            %input#select-to.form-control{:type => "text"}/
+          .form-group
+            %label.form-control-label{:for => "message-text"} Message:
+            %textarea#message-text.form-control
+      .modal-footer
+        .col-sm-6
+          %p#erorrs-modal Error
+        .col-sm-6
+          %button.btn.btn-secondary{"data-dismiss" => "modal", :type => "button"} Close
+          %button#btn-send-message-users.btn.btn-primary.btn-send{:type => "button"} Send message
+-# END MODAL MESSAGE
+-# MODAL READ MESSAGE
+#read-message-modal.modal.fade{"aria-hidden" => "true", :role => "dialog", :tabindex => "-1"}
+  .modal-dialog{:role => "document"}
+    .modal-content
+      .modal-header
+        %h5#modal-title.modal-title
+          Message
+          %span#message-from
+        %button.close{"aria-label" => "Close", "data-dismiss" => "modal", :type => "button"}
+          %span{"aria-hidden" => "true"} ×
+      .modal-body
+        %form
+          .form-group
+            %label#label-message-modal{:for => "usr"} From:
+            %input#send-from.form-control{:disabled => "true", :type => "text"}/
+          .form-group
+            %label{:for => "usr"} Time:
+            %input#send-from-time.form-control{:disabled => "true", :type => "text"}/
+          .form-group
+            %label.form-control-label{:for => "message-text"} Message:
+            %textarea#read-message-text.form-control{:disabled => "true"}
+-# MODAL END MESSAGE
