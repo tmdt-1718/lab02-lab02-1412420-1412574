@@ -10,6 +10,13 @@ class User < ApplicationRecord
 
   mount_uploader :avatar, AvatarUploader
 
+  #association01\
+  has_and_belongs_to_many :friends,
+                          class_name: 'User',
+                          join_table: :users_friends,
+                          foreign_key: :user_id,
+                          association_foreign_key: :friend_id
+
   def self.from_omniauth(auth)
     email = auth.info&.email 
     user = User.find_by_email(email)
@@ -32,5 +39,9 @@ class User < ApplicationRecord
     # uncomment the line below to skip the confirmation emails.
     # user.skip_confirmation!
     user
+  end
+
+  def friend?(user)
+    UserFriend.related?(self, user)
   end
 end
