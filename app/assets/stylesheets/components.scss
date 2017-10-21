@@ -126,6 +126,9 @@ ul.list-users {
     position: relative;
     border-left: 4px solid transparent;
     font-size: 0.875em;
+    p {
+      margin: 0px;
+    }
     &:before {
       width: 10px;
       height: 10px;

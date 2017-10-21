@@ -78,20 +78,20 @@
           {{!--  --}}
         #users.tab-pane.fade
           %ul.list-users
-            {{#each users as |user| }}
-            %li.user
-              .avatar-user
-                %img{:src => "{{ user.avatar }}"}
+            - @all_user.each do |user|
+              %li.user
+                .avatar-user
+                  = user.decorate.user_thumb_avatar
                 %p.user-content
-                  %a{:href => "#"} {{ user.name }}
-                {{#if user.isFriend }}
-                %button.btn-friend.btn-friend-remove{"data-id" => "{{ user.id }}", "data-sign" => "{{ user.isFriend }}", "data-user" => "{{ ../currentUser.id }}"}
-                  %p Remove
-                {{else}}
-                %button.btn-friend.btn-friend-add{"data-id" => "{{ user.id }}", "data-sign" => "{{ user.isFriend }}", "data-user" => "{{ ../currentUser.id }}"}
-                  %p Add
-                {{/if}}
-              {{/each}}
-
+                  = link_to user.name, '#'
+                - is_friend = user.friend?(current_user)
+                - p "user: #{current_user.name} - friend: #{user.name}: #{is_friend}"
+                - if is_friend
+                  %button.btn-friend.btn-friend-remove{data: { id: user.id, sign: is_friend.to_s, user: current_user.id }}
+                    %p Remove
+                - else 
+                  %button.btn-friend.btn-friend-add{data: { id: user.id, sign: is_friend.to_s, user: current_user.id }}
+                    %p Add
 
 = render 'modals'
+= javascript_include_tag 'ajax', data: {'turbolinks-track' => true}
