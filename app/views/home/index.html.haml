@@ -27,7 +27,7 @@
         #r-messages.tab-pane.fade.in.active
           %ul#list-r-messages.list-messages
             - @received_messages.each do |message|
-              %li.message.message-receive{class: unread_class(message)}
+              %li.message.message-receive{class: unread_class(message), data: {read: message.read.to_s, message: {id: message.id}}}
                 .date
                   %span 
                     = message.sent_at.day

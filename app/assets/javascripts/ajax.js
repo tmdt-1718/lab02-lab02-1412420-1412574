@@ -50,15 +50,16 @@ $(document).ready(function(e) {
 
   // ============ update read message
 
-  function handleReceiveUnread(e) {
-    var li = $(this);
+  function handleReceiveUnread(li) {
     var data = {
       uid: li.attr('data-uid'),
       user_id: li.attr('data-user-id')
     }
+    var message_id = li.attr('data-message-id');
+    var url = `/messages/${message_id}/update_read`;
     $.ajax({
-      url: 'messages/update_read',
-      type: "post",
+      url: url,
+      type: 'post',
       headers: {
         Accept: "application/json",
         "Content-Type": "application/json"
@@ -69,13 +70,12 @@ $(document).ready(function(e) {
       if(xhr.ok) {
         li.removeClass("message-unread");
         $("#label-message-modal").html("From");
-        $("#r-status-" + xhr.message.uid).html('<i class="fa fa-envelope-open-o" aria-hidden="true"></i>');
-        $("#read-message-modal #send-from").val(xhr.message.sName);
-        $("#read-message-modal #message-from").html('from ' + xhr.message.sName);
-        var time = new Date(xhr.message.uid);
-        time = time.toLocaleString();
-        $("#read-message-modal #send-from-time").val(time);
-        $("#read-message-modal .note-editable.panel-body").html(xhr.message.message);
+        $("#r-status-" + xhr.message.id).html('<i class="fa fa-envelope-open-o" aria-hidden="true"></i>');
+        $("#read-message-modal #send-from").val(xhr.message.sender);
+        $("#read-message-modal #message-from").html('from ' + xhr.message.sender);
+
+        $("#read-message-modal #send-from-time").val(xhr.message.sent_ago);
+        $("#read-message-modal .note-editable.panel-body").html(xhr.message.content);
 
         $("#read-message-modal").modal();
       }
@@ -84,7 +84,12 @@ $(document).ready(function(e) {
       console.log(error);
     });
   }
-  $(".list-messages").on('click', '.message-receive', handleReceiveUnread);
+
+  $(".list-messages").on('click', '.message-receive', function(e) {
+    var read = $(this).attr("data-read") == 'true' ? true : false;
+    if(read) { console.log(1); return }
+    handleReceiveUnread($(this));
+  });
   // ============ end update read message
 
   // send message
