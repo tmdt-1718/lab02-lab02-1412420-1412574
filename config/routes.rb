@@ -14,6 +14,8 @@ Rails.application.routes.draw do
     
   scope '(:locale)', :locale => /en|vi/ do
     root to: 'home#index'
+    draw :api
     draw :home
+    draw :messages
   end  
 end

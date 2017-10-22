@@ -1,15 +1,17 @@
 $(document).ready(function(e) {
   // ============ BTN ADD FRIEND
-  function ajaxFriend(btnFriend, postUrl, content, addClass, removeClass) {
+  function ajaxFriend(btnFriend, type, content, addClass, removeClass) {
     btnFriend.prop('disabled', true);
     var userId = btnFriend.attr('data-user');
     var friendId = btnFriend.attr('data-id');
     var data = {
-      userId: userId,
-      friendId: friendId
+      user_id: userId,
+      friend_id: friendId,
+      type: type
     }
+    var url = '/api/v1/users/add_remove_friend';
     $.ajax({
-      url: postUrl,
+      url: url,
       type: "post",
       headers: {
         Accept: "application/json",
@@ -18,6 +20,7 @@ $(document).ready(function(e) {
       data: JSON.stringify(data)
     })
     .done(function(xhr) {
+      console.log(xhr);
       if(xhr.ok) {
         btnFriend.html('<p>' + content + '</p>');
         btnFriend.removeClass(removeClass);
@@ -35,44 +38,43 @@ $(document).ready(function(e) {
   $('#users').on('click', '.btn-friend-add', function(e) {
     var btnFriend = $(this);
     e.preventDefault();
-    ajaxFriend(btnFriend, '/user/add_friend', 'Remove', 'btn-friend-remove', 'btn-friend-add');
+    ajaxFriend(btnFriend, 1, 'Remove', 'btn-friend-remove', 'btn-friend-add');
   });
   //remove
   $('#users').on('click', '.btn-friend-remove', function(e) {
     var btnFriend = $(this);
     e.preventDefault();
-    ajaxFriend(btnFriend, '/user/remove_friend', 'Add', 'btn-friend-add', 'btn-friend-remove');
+    ajaxFriend(btnFriend, 0, 'Add', 'btn-friend-add', 'btn-friend-remove');
   });
   // ============ END BTN ADD FRIEND
 
   // ============ update read message
 
-  function handleReceiveUnread(e) {
-    var li = $(this);
+  function handleReceiveUnread(li) {
     var data = {
       uid: li.attr('data-uid'),
       user_id: li.attr('data-user-id')
     }
+    var message_id = li.attr('data-message-id');
+    var url = `/messages/${message_id}/update_read`;
     $.ajax({
-      url: 'messages/update_read',
-      type: "post",
+      url: url,
+      type: 'post',
       headers: {
         Accept: "application/json",
         "Content-Type": "application/json"
-      },
-      data: JSON.stringify(data)
+      }
     })
     .done(function(xhr) {
       if(xhr.ok) {
         li.removeClass("message-unread");
         $("#label-message-modal").html("From");
-        $("#r-status-" + xhr.message.uid).html('<i class="fa fa-envelope-open-o" aria-hidden="true"></i>');
-        $("#read-message-modal #send-from").val(xhr.message.sName);
-        $("#read-message-modal #message-from").html('from ' + xhr.message.sName);
-        var time = new Date(xhr.message.uid);
-        time = time.toLocaleString();
-        $("#read-message-modal #send-from-time").val(time);
-        $("#read-message-modal .note-editable.panel-body").html(xhr.message.message);
+        $("#r-status-" + xhr.message.id).html('<i class="fa fa-envelope-open-o" aria-hidden="true"></i>');
+        $("#read-message-modal #send-from").val(xhr.message.sender);
+        $("#read-message-modal #message-from").html('from ' + xhr.message.sender);
+
+        $("#read-message-modal #send-from-time").val(xhr.message.sent_ago);
+        $("#read-message-modal .note-editable.panel-body").html(xhr.message.content);
 
         $("#read-message-modal").modal();
       }
@@ -81,35 +83,36 @@ $(document).ready(function(e) {
       console.log(error);
     });
   }
-  $(".list-messages").on('click', '.message-receive', handleReceiveUnread);
+
+  $(".list-messages").on('click', '.message-receive', function(e) {
+    var read = $(this).attr("data-read") == 'true' ? true : false;
+    if(read) { console.log(1); return }
+    handleReceiveUnread($(this));
+  });
   // ============ end update read message
 
   // send message
 
   $(".list-messages").on('click', '.message-send', function(e) {
     var li = $(this);
-    var data = {
-      uid: li.attr('data-uid'),
-      user_id: li.attr('data-user-id')
-    }
+    var message_id = li.attr('data-message-id');
+    var url = `/messages/${message_id}/message`;
     $.ajax({
-      url: 'messages/get_send_message',
-      type: "post",
+      url: url,
+      type: "get",
       headers: {
         Accept: "application/json",
         "Content-Type": "application/json"
-      },
-      data: JSON.stringify(data)
+      }
     })
     .done(function(xhr) {
       if(xhr.ok) {
         $("#label-message-modal").html("To");
-        $("#read-message-modal #send-from").val(xhr.message.rName);
-        $("#read-message-modal #message-from").html('to ' + xhr.message.rName);
-        var time = new Date(xhr.message.uid);
-        time = time.toLocaleString();
-        $("#read-message-modal #send-from-time").val(time);
-        $("#read-message-modal .note-editable.panel-body").html(xhr.message.message);
+        $("#read-message-modal #send-from").val(xhr.message.receiver);
+        $("#read-message-modal #message-from").html('to ' + xhr.message.receiver);
+
+        $("#read-message-modal #send-from-time").val(xhr.message.sent_ago);
+        $("#read-message-modal .note-editable.panel-body").html(xhr.message.content);
 
         $("#read-message-modal").modal();
       }
@@ -124,9 +127,11 @@ $(document).ready(function(e) {
   // ============ get all friend
   $("#btn-compose-message").on('click', function(e) {
     selectize.clearOptions();
+    var user_id = $(this).attr('data-user-id');
+    var url = `/api/v1/users/${user_id}/get_all_friends`;
     $.ajax({
-      url: 'user/get_all_friend',
-      type: "post",
+      url: url,
+      type: "get",
       headers: {
         Accept: "application/json",
         "Content-Type": "application/json"
@@ -136,7 +141,7 @@ $(document).ready(function(e) {
       console.log(xhr);
       if(xhr.ok) {
         var options = [];
-        var users = JSON.parse(xhr.users);
+        var users = xhr.message;
         selectize.addOption(users);
       }
     })
@@ -152,6 +157,7 @@ $(document).ready(function(e) {
 
   $("#btn-send-message-users").on("click", function(e) {
     e.preventDefault();
+    debugger
     var input = selectize.getValue();
     var divContent = $('.note-editable.panel-body');
     content = divContent.html().trim();
@@ -160,10 +166,10 @@ $(document).ready(function(e) {
       var arrInput = input.split(",");
       var data = {
         users: arrInput,
-        message: content
+        content: content
       }
       $.ajax({
-        url: 'messages/send',
+        url: 'messages/send_message',
         type: "post",
         headers: {
           Accept: "application/json",
