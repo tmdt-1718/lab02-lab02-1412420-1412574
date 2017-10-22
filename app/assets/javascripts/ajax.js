@@ -63,8 +63,7 @@ $(document).ready(function(e) {
       headers: {
         Accept: "application/json",
         "Content-Type": "application/json"
-      },
-      data: JSON.stringify(data)
+      }
     })
     .done(function(xhr) {
       if(xhr.ok) {
@@ -96,28 +95,24 @@ $(document).ready(function(e) {
 
   $(".list-messages").on('click', '.message-send', function(e) {
     var li = $(this);
-    var data = {
-      uid: li.attr('data-uid'),
-      user_id: li.attr('data-user-id')
-    }
+    var message_id = li.attr('data-message-id');
+    var url = `/messages/${message_id}/message`;
     $.ajax({
-      url: 'messages/get_send_message',
-      type: "post",
+      url: url,
+      type: "get",
       headers: {
         Accept: "application/json",
         "Content-Type": "application/json"
-      },
-      data: JSON.stringify(data)
+      }
     })
     .done(function(xhr) {
       if(xhr.ok) {
         $("#label-message-modal").html("To");
-        $("#read-message-modal #send-from").val(xhr.message.rName);
-        $("#read-message-modal #message-from").html('to ' + xhr.message.rName);
-        var time = new Date(xhr.message.uid);
-        time = time.toLocaleString();
-        $("#read-message-modal #send-from-time").val(time);
-        $("#read-message-modal .note-editable.panel-body").html(xhr.message.message);
+        $("#read-message-modal #send-from").val(xhr.message.receiver);
+        $("#read-message-modal #message-from").html('to ' + xhr.message.receiver);
+
+        $("#read-message-modal #send-from-time").val(xhr.message.sent_ago);
+        $("#read-message-modal .note-editable.panel-body").html(xhr.message.content);
 
         $("#read-message-modal").modal();
       }
@@ -132,9 +127,11 @@ $(document).ready(function(e) {
   // ============ get all friend
   $("#btn-compose-message").on('click', function(e) {
     selectize.clearOptions();
+    var user_id = $(this).attr('data-user-id');
+    var url = `/api/v1/users/${user_id}/get_all_friends`;
     $.ajax({
-      url: 'user/get_all_friend',
-      type: "post",
+      url: url,
+      type: "get",
       headers: {
         Accept: "application/json",
         "Content-Type": "application/json"
@@ -144,7 +141,7 @@ $(document).ready(function(e) {
       console.log(xhr);
       if(xhr.ok) {
         var options = [];
-        var users = JSON.parse(xhr.users);
+        var users = xhr.message;
         selectize.addOption(users);
       }
     })
@@ -160,6 +157,7 @@ $(document).ready(function(e) {
 
   $("#btn-send-message-users").on("click", function(e) {
     e.preventDefault();
+    debugger
     var input = selectize.getValue();
     var divContent = $('.note-editable.panel-body');
     content = divContent.html().trim();
@@ -168,10 +166,10 @@ $(document).ready(function(e) {
       var arrInput = input.split(",");
       var data = {
         users: arrInput,
-        message: content
+        content: content
       }
       $.ajax({
-        url: 'messages/send',
+        url: 'messages/send_message',
         type: "post",
         headers: {
           Accept: "application/json",

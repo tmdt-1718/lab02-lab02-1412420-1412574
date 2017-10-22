@@ -1,6 +1,6 @@
 module UserMessageHelper
   def short_content(message)
-    message.content.truncate(200)
+    truncate_html(message.content, length: 150, omission: '...')
   end 
 
   def three_chars_month(date)
@@ -14,5 +14,9 @@ module UserMessageHelper
 
   def time_ago(time)
     "#{time_ago_in_words(time)} ago"
+  end 
+
+  def standard_time(time)
+    time.strftime("%I:%M:%S%p")
   end 
 end 

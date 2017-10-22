@@ -16,6 +16,14 @@ class Api::V1::UsersController < Api::ApiController
     render json: { MESSAGE => 'ok', ok: true }, status: STATUS_OK
   end   
 
+  def get_all_friends
+    current_user = User.find_by_id(params[:id])
+    if current_user
+      render json: { MESSAGE => current_user.friends, ok: true }, status: STATUS_OK
+    else 
+      render json: { ok: false }, status: STATUS_BAD_REQUEST
+    end 
+  end 
   private 
 
   def friend_params

@@ -30,6 +30,7 @@ gem 'summernote-rails'
 gem "breadcrumbs_on_rails"
 gem 'faker'
 gem 'selectize-rails'
+gem 'truncate_html', '~> 0.9.3'
 
 #omniauth
 gem 'omniauth-facebook'
