@@ -77,6 +77,7 @@ $(document).ready(function(e) {
         $("#read-message-modal .note-editable.panel-body").html(xhr.message.content);
 
         $("#read-message-modal").modal();
+        li.attr("data-read", true);
       }
     })
     .fail(function(error) {
@@ -157,7 +158,6 @@ $(document).ready(function(e) {
 
   $("#btn-send-message-users").on("click", function(e) {
     e.preventDefault();
-    debugger
     var input = selectize.getValue();
     var divContent = $('.note-editable.panel-body');
     content = divContent.html().trim();
