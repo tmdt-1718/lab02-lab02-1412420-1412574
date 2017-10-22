@@ -7,12 +7,13 @@
 #   Character.create(name: 'Luke', movie: movies.first)
 
 User.delete_all
+Message.delete_all
+
 
 user = User.new
 user.email = 'phanphuocdt@gmail.com'
 user.name = 'Austin'
 user.password = 'password'
-user.avatar = File.open(File.join(Rails.root, 'r.jpg'))
 user.save
 
 10.times do |n| 
@@ -20,7 +21,6 @@ user.save
   user.email = Faker::Internet.email
   user.name = Faker::Name.name 
   user.password = 'password'
-  user.avatar = File.open(File.join(Rails.root, 'r.jpg'))
   user.save
 end 
 
@@ -28,7 +28,14 @@ users = User.all
 users.each do |user|
   (1..5).to_a.sample.times do 
     friend = users.sample
-    next if UserFriend.related?(user, friend)
+    next if user.friend?(friend)
     user.friends << friend
   end 
+end 
+
+10.times do 
+  messages = {items: {qty: Faker::Number.number(2), product: Faker::Coffee.blend_name}, 
+              customer: Faker::Name.name}
+
+  Message.create(messages: messages)
 end 
