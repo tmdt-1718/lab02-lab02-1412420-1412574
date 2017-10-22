@@ -16,5 +16,6 @@ Rails.application.routes.draw do
     root to: 'home#index'
     draw :api
     draw :home
+    draw :messages
   end  
 end
