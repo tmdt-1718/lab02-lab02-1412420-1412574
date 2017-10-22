@@ -6,7 +6,7 @@
 .main-content
   .left-main-content.col-md-3
     .function-use
-      %button#btn-compose-message.btn-standard.btn-compose{"data-target" => "#send-message-modal", "data-toggle" => "modal"} Compose
+      %button#btn-compose-message.btn-standard.btn-compose{"data-target" => "#send-message-modal", "data-toggle" => "modal", data: {user: { id: current_user.id}}} Compose
   
   .center-main-content.col-md-9
     .tab-content-c
@@ -44,12 +44,12 @@
                     = time_ago(message.sent_at)
                   %i.fa.fa-globe{"aria-hidden" => "true"}
                 %p.message-content
-                  = short_content(message)
+                  = raw short_content(message)
 
         #s-messages.tab-pane.fade
           %ul.list-messages
             - @sent_messages.each do |message|
-              %li.message.message-send{class: unread_class(message)}
+              %li.message.message-send{class: unread_class(message), data: {read: message.read.to_s, message: {id: message.id}}}
                 .date
                   %span
                     = message.sent_at.day
@@ -63,7 +63,7 @@
                     - else 
                       %i.fa.fa-envelope-o{"aria-hidden" => "true"}
                   %time
-                    = time_ago(message.sent_at)
+                    = standard_time(message.sent_at)
                   - if message.read?
                     &bull; Seen
                     %time
