@@ -25,6 +25,10 @@ ActiveRecord::Schema.define(version: 20171021182622) do
     t.index ["sender_id"], name: "index_messages_on_sender_id"
   end
 
+  create_table "orders", id: false, force: :cascade do |t|
+    t.jsonb "info"
+  end
+
   create_table "users", force: :cascade do |t|
     t.string "email", default: "", null: false
     t.string "encrypted_password", default: "", null: false

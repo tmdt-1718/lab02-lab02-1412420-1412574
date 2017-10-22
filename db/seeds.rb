@@ -26,16 +26,27 @@ end
 
 users = User.all
 users.each do |user|
-  (1..5).to_a.sample.times do 
-    friend = users.sample
+  (4..6).to_a.sample.times do 
+    friend = users.reject { |u| u == user }.sample 
     next if user.friend?(friend)
     user.friends << friend
   end 
 end 
 
-10.times do 
-  messages = {items: {qty: Faker::Number.number(2), product: Faker::Coffee.blend_name}, 
-              customer: Faker::Name.name}
+user_ids = users.ids
 
-  Message.create(messages: messages)
+users.each do |user|
+  sender_id = user.id
+  receiver_id = user_ids.reject { |e| e == sender_id }.sample 
+  [3, 5].sample.times do 
+    content = Faker::Lorem.sentence
+    message = UserMessage.new(sender_id: sender_id, receiver_id: receiver_id, content: content)
+    message.save
+  end
+  
+  [3, 5].sample.times do 
+    content = Faker::Lorem.sentence
+    message = UserMessage.new(sender_id: receiver_id, receiver_id: sender_id, content: content)
+    message.save
+  end
 end 
