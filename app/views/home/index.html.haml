@@ -26,56 +26,51 @@
       #tab-selection-content.tab-content
         #r-messages.tab-pane.fade.in.active
           %ul#list-r-messages.list-messages
-            {{#each rMessages as |value|}}
-            = succeed "{{" do
-              %li.message.message-receive.message-unread{:class => "{{#unless value.read}} {{/unless}}"}
-            .date
-              %span {{ getDate value.time }}
-              %span.small {{ getMonth value.time }}
-            %p.message-title
-              From {{ value.sName }}
-              %span.status{:id => "r-status-{{ value.uid }}"}
-                {{#if value.read }}
-                %i.fa.fa-envelope-open-o{"aria-hidden" => "true"}
-                {{else}}
-                %i.fa.fa-envelope-o{"aria-hidden" => "true"}
-                {{/if}}
-              %time.timeago{:datetime => "{{ value.time }}"} {{ value.time }}
-              %i.fa.fa-globe{"aria-hidden" => "true"}
-            %p.message-content
-              {{{ truncatise value.message }}}
-          {{/each}}
-          {{!--  --}}
-          
-          {{!--  --}}
+            - @received_messages.each do |message|
+              %li.message.message-receive{class: unread_class(message)}
+                .date
+                  %span 
+                    = message.sent_at.day
+                  %span.small
+                    = three_chars_month(message.sent_at)
+                %p.message-title
+                  From #{message.sender.name}
+                  %span.status{:id => "r-status-#{message.id}"}
+                    - if message.read?
+                      %i.fa.fa-envelope-open-o{"aria-hidden" => "true"}
+                    - else 
+                      %i.fa.fa-envelope-o{"aria-hidden" => "true"}
+                  %time
+                    = time_ago(message.sent_at)
+                  %i.fa.fa-globe{"aria-hidden" => "true"}
+                %p.message-content
+                  = short_content(message)
+
         #s-messages.tab-pane.fade
           %ul.list-messages
-            {{#each sMessages as |value|}}
-            = succeed "{{" do
-              %li.message.message-send.message-unread{:class => "{{#unless value.read}} {{/unless}}"}
-            .date
-              %span 13
-              %span.small May
-            %p.message-title
-              To {{ value.rName }}
-              %span.status
-                {{#if value.read }}
-                %i.fa.fa-envelope-open-o{"aria-hidden" => "true"}
-                {{else}}
-                %i.fa.fa-envelope-o{"aria-hidden" => "true"}
-                {{/if}}
-              %time{:datetime => "{{ value.time }}"} {{ getStandardTime value.time }}
-              {{#if value.read }}
-              Seen
-              %time.timeago{:datetime => "{{ value.readTime }}"} {{ value.rTime }}
-              {{/if}}
-              %i.fa.fa-globe{"aria-hidden" => "true"}
-            %p.message-content
-              {{{ truncatise value.message }}}
-          {{/each}}
-          {{!--  --}}
-          
-          {{!--  --}}
+            - @sent_messages.each do |message|
+              %li.message.message-send{class: unread_class(message)}
+                .date
+                  %span
+                    = message.sent_at.day
+                  %span.small
+                    = three_chars_month(message.sent_at)
+                %p.message-title
+                  To #{message.receiver.name}
+                  %span.status
+                    - if message.read?
+                      %i.fa.fa-envelope-open-o{"aria-hidden" => "true"}
+                    - else 
+                      %i.fa.fa-envelope-o{"aria-hidden" => "true"}
+                  %time
+                    = time_ago(message.sent_at)
+                  - if message.read?
+                    &bull; Seen
+                    %time
+                      = time_ago(message.read_at)
+                    %i.fa.fa-globe{"aria-hidden" => "true"}
+                %p.message-content
+                  = short_content(message)
         #users.tab-pane.fade
           %ul.list-users
             - @all_user.each do |user|
