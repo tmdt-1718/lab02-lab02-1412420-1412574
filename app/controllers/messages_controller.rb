@@ -30,12 +30,18 @@ class MessagesController < ApplicationController
   end 
 
   def get_all_receive_message  
-    messages = current_user.received_messages(:desc).map { |m| _build_message_response(m) }
-    render json: { MESSAGE => messages ,ok: true }, status: STATUS_OK
+    rmessages = current_user.received_messages(:desc).map { |m| _build_message_response(m) }
+    smessages = current_user.sent_messages(:desc).map { |m| _build_message_response(m) }
+    result = {
+      received_messages: rmessages,
+      sent_messages: smessages
+    }
+    render json: { MESSAGE => result ,ok: true }, status: STATUS_OK
   end 
 
   private 
   def _build_message_response(message)
+    read_ago = "#{time_ago_in_words(message.read_at)} ago" if message.read 
     {
       id: message.id,
       content: message.content,
@@ -48,7 +54,8 @@ class MessagesController < ApplicationController
       day: message.sent_at.strftime('%d'),
       month: message.sent_at.strftime('%b'),
       time: message.sent_at.strftime("%r"),
-      time_ago: "#{time_ago_in_words(message.sent_at)} ago"
+      time_ago: "#{time_ago_in_words(message.sent_at)} ago",
+      read_ago: read_ago
     }
   end 
 end

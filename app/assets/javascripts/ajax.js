@@ -232,12 +232,22 @@ $(document).ready(function(e) {
     .done(function(xhr){
       console.log(xhr);
       if(xhr.ok) {
-        var ul = $("#list-r-messages");
-        ul.html("");
-        for(var index in xhr.message) {
-          var message = xhr.message[index];
+        var rul = $("#list-r-messages");
+        var sul = $("#list-s-messages");
+        rul.html("");
+        sul.html("");
+        var received_messages = xhr.message.received_messages;
+        var sent_messages = xhr.message.sent_messages;
+        for(var index in received_messages) {
+          var message = received_messages[index];
           var html_build = createReceivedMessage(message);
-          ul.append($(html_build));
+          rul.append($(html_build));
+        }
+        debugger
+        for(var index in sent_messages) {
+          var message = sent_messages[index];
+          var html_build = createSendMessage(message);
+          sul.append($(html_build));
         }
       }
     })
@@ -272,7 +282,10 @@ $(document).ready(function(e) {
   }
 
   function createSendMessage(message) {
-    return `<li class="message message-send message-unread" data-message-id="${message.id}" data-read="${message.read}">
+    var read_class = message.read ? '' : 'message-unread';
+    var evelop_icon = message.read ? '<i aria-hidden="true" class="fa fa-envelope-open-o"></i>' : '<i aria-hidden="true" class="fa fa-envelope-o"></i>';
+    var time = message.read ? `&bull; Seen <time> ${message.read_ago} </time>` : '';
+    return `<li class="message message-send ${read_class}" data-message-id="${message.id}" data-read="${message.read}">
               <div class="date">
                 <span>
                   ${message.day}
@@ -284,11 +297,13 @@ $(document).ready(function(e) {
               <p class="message-title">
                 To ${message.receiver}
                 <span class="status">
-                  <i aria-hidden="true" class="fa fa-envelope-o"></i>
+                  ${evelop_icon}
                 </span>
                 <time>
                   ${message.time}
                 </time>
+                ${time}
+                <i aria-hidden="true" class="fa fa-globe"></i>
               </p>
               <div class="message-content">
                 ${message.content}
