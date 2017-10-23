@@ -79,7 +79,7 @@
                   = user.decorate.user_thumb_avatar
                 %p.user-content
                   = link_to user.name, '#'
-                - is_friend = user.friend?(current_user)
+                - is_friend = current_user.friend?(user)
                 - p "user: #{current_user.name} - friend: #{user.name}: #{is_friend}"
                 - if is_friend
                   %button.btn-friend.btn-friend-remove{data: { id: user.id, sign: is_friend.to_s, user: current_user.id }}
