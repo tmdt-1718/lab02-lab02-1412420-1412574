@@ -56,7 +56,7 @@ $(document).ready(function(e) {
       user_id: li.attr('data-user-id')
     }
     var message_id = li.attr('data-message-id');
-    var url = `/messages/${message_id}/update_read`;
+    var url = '/messages/' + message_id + '/update_read';
     $.ajax({
       url: url,
       type: 'post',
@@ -87,7 +87,7 @@ $(document).ready(function(e) {
 
   $(".list-messages").on('click', '.message-receive', function(e) {
     var read = $(this).attr("data-read") == 'true' ? true : false;
-    if(read) { 
+    if(read) {
       toastr['error']("This message has already read");
       return;
     }
@@ -100,7 +100,7 @@ $(document).ready(function(e) {
   $(".list-messages").on('click', '.message-send', function(e) {
     var li = $(this);
     var message_id = li.attr('data-message-id');
-    var url = `/messages/${message_id}/message`;
+    var url = '/messages/' + message_id + '/message';
     $.ajax({
       url: url,
       type: "get",
@@ -132,7 +132,7 @@ $(document).ready(function(e) {
   $("#btn-compose-message").on('click', function(e) {
     selectize.clearOptions();
     var user_id = $(this).attr('data-user-id');
-    var url = `/api/v1/users/${user_id}/get_all_friends`;
+    var url = '/api/v1/users/' + user_id + '/get_all_friends';
     $.ajax({
       url: url,
       type: "get",
@@ -261,53 +261,53 @@ $(document).ready(function(e) {
   function createReceivedMessage(message) {
     var read_class = message.read ? '' : 'message-unread';
     var evelop_icon = message.read ? '<i aria-hidden="true" class="fa fa-envelope-open-o"></i>' : '<i aria-hidden="true" class="fa fa-envelope-o"></i>';
-    return ` <li class="message message-receive ${read_class}" data-message-id="${message.id}" data-read="${message.read}">
-              <div class="date">
-                <span> ${message.day} </span>
-                <span class="small"> ${message.month} </span>
-              </div>
-              <p class="message-title">
-                From ${message.sender}
-                <span class="status" id="r-status-${message.id}">
-                  ${evelop_icon}
-                </span>
-                <time> ${message.time_ago} </time>
-                <i aria-hidden="true" class="fa fa-globe"></i>
-              </p>
-              <div class="message-content">
-                ${message.content}
-              </div>
-            </li>`;
+    return '<li class="message message-receive ' + read_class + '" data-message-id="' + message.id + '" data-read="' + message.read +'">'
+              +'<div class="date">'
+                +'<span> ' + message.day + ' </span>'
+              +'<span class="small"> ' + message.month + ' </span>'
+              +'</div>'
+              +'<p class="message-title">'
+              +'From ' + message.sender
+              +' <span class="status" id="r-status-' + message.id + '">'
+                +evelop_icon
+                +'</span>'
+                +'<time> ' + message.time_ago + ' </time>'
+                +'<i aria-hidden="true" class="fa fa-globe"></i>'
+              +'</p>'
+              +'<div class="message-content">'
+                + message.content
+              +'</div>'
+            +'</li>';
   }
 
   function createSendMessage(message) {
     var read_class = message.read ? '' : 'message-unread';
     var evelop_icon = message.read ? '<i aria-hidden="true" class="fa fa-envelope-open-o"></i>' : '<i aria-hidden="true" class="fa fa-envelope-o"></i>';
-    var time = message.read ? `&bull; Seen <time> ${message.read_ago} </time>` : '';
-    return `<li class="message message-send ${read_class}" data-message-id="${message.id}" data-read="${message.read}">
-              <div class="date">
-                <span>
-                  ${message.day}
-                </span>
-                <span class="small">
-                  ${message.month}
-                </span>
-              </div>
-              <p class="message-title">
-                To ${message.receiver}
-                <span class="status">
-                  ${evelop_icon}
-                </span>
-                <time>
-                  ${message.time}
-                </time>
-                ${time}
-                <i aria-hidden="true" class="fa fa-globe"></i>
-              </p>
-              <div class="message-content">
-                ${message.content}
-              </div>
-            </li>`;
+    var time = message.read ? ' &bull; Seen <time> ' + message.read_ago + '</time>' : '';
+    return '<li class="message message-send ' + read_class + '" data-message-id="' + message.id + '" data-read="' + message.read + '">'
+              +'<div class="date">'
+                +'<span>'
+                  +message.day
+                +'</span>'
+                +'<span class="small">'
+                  +message.month
+                +'</span>'
+              +'</div>'
+              +'<p class="message-title">'
+                +'To ' + message.receiver
+                +' <span class="status">'
+                  +evelop_icon
+                +'</span> '
+                +'<time>'
+                  +message.time
+                +'</time>'
+                  +time
+                +' <i aria-hidden="true" class="fa fa-globe"></i>'
+              +'</p>'
+              +'<div class="message-content">'
+                +message.content
+              +'</div>'
+            +'</li>';
   }
 
   // end sync message
