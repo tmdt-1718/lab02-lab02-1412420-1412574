@@ -87,7 +87,10 @@ $(document).ready(function(e) {
 
   $(".list-messages").on('click', '.message-receive', function(e) {
     var read = $(this).attr("data-read") == 'true' ? true : false;
-    if(read) { console.log(1); return }
+    if(read) { 
+      toastr['error']("This message has already read");
+      return;
+    }
     handleReceiveUnread($(this));
   });
   // ============ end update read message
@@ -185,6 +188,13 @@ $(document).ready(function(e) {
           errors.html("Message send successfully");
           divContent.html("");
           selectize.clear();
+          var ul = $("#list-s-messages");
+          for(var index in xhr.message) {
+            var message = xhr.message[index];
+            var html_build = createSendMessage(message);
+            ul.prepend($(html_build));
+          }
+
         } else {
           errors.show();
           errors.css("color", "red");
@@ -210,10 +220,10 @@ $(document).ready(function(e) {
   // sync message
   $("#btn-sync").click(function(e) {
     var btn = $(this);
-    btn.html('<img src="images/load.gif">');
+    btn.html('<img src="https://easeofdoingbusinessinassam.in/images/loading.gif">');
     $.ajax({
       url: 'messages/get_all_receive_message',
-      type: "post",
+      type: "get",
       headers: {
         Accept: "application/json",
         "Content-Type": "application/json"
@@ -222,12 +232,12 @@ $(document).ready(function(e) {
     .done(function(xhr){
       console.log(xhr);
       if(xhr.ok) {
-        var messages = xhr.messages;
-        var l = messages.length;
         var ul = $("#list-r-messages");
         ul.html("");
-        for(var i = 0 ; i < l ; i++) {
-          ul.append(createLi(messages[i]));
+        for(var index in xhr.message) {
+          var message = xhr.message[index];
+          var html_build = createReceivedMessage(message);
+          ul.append($(html_build));
         }
       }
     })
@@ -239,28 +249,51 @@ $(document).ready(function(e) {
     });
   });
 
-  function createLi(message) {
-    var monthNames = ["Jan", "Feb", "Mar", "Apr", "May", "Jun",
-      "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"
-    ];
-    var unread = message.read == 0 ? 'message-unread' : '';
-    var date = new Date(message.time);
-    var d = date.getDate();
-    var m = monthNames[date.getMonth()];
-    var readDate = new Date(message.uid);
-    var timeAgo = jQuery.timeago(message.uid);
-    var content = jQuery.truncate(message.message, {
-      length: 300,
-      stripTags: true
-    });
-    var li = $(`<li class="message message-receive ${unread}" data-uid="${message.uid}" data-user-id="${message.sUser}" data-user-name="${message.sName}" data-receive-time="${readDate}"></li>`);
-    var div = (`<div class="date"><span>${d}</span><span class="small">${m}</span></div>`);
-    var pTitle = $(`<p class="message-title">From ${message.sName}&nbsp;<span class="status" id="r-status-${message.uid}"><i class="fa fa-envelope-open-o" aria-hidden="true"></i></span>&nbsp;<time class="timeago" datetime="${readDate}" title="${readDate}">${timeAgo} </time>&bull;&nbsp;<i class="fa fa-globe" aria-hidden="true"></i></p>`)
-    var pContent = $(`<p class="message-content">${content}</p>`)
-    li.append(div);
-    li.append(pTitle);
-    li.append(pContent);
-    return li;
+  function createReceivedMessage(message) {
+    var read_class = message.read ? '' : 'message-unread';
+    var evelop_icon = message.read ? '<i aria-hidden="true" class="fa fa-envelope-open-o"></i>' : '<i aria-hidden="true" class="fa fa-envelope-o"></i>';
+    return ` <li class="message message-receive ${read_class}" data-message-id="${message.id}" data-read="${message.read}">
+              <div class="date">
+                <span> ${message.day} </span>
+                <span class="small"> ${message.month} </span>
+              </div>
+              <p class="message-title">
+                From ${message.sender}
+                <span class="status" id="r-status-${message.id}">
+                  ${evelop_icon}
+                </span>
+                <time> ${message.time_ago} </time>
+                <i aria-hidden="true" class="fa fa-globe"></i>
+              </p>
+              <div class="message-content">
+                ${message.content}
+              </div>
+            </li>`;
+  }
+
+  function createSendMessage(message) {
+    return `<li class="message message-send message-unread" data-message-id="${message.id}" data-read="${message.read}">
+              <div class="date">
+                <span>
+                  ${message.day}
+                </span>
+                <span class="small">
+                  ${message.month}
+                </span>
+              </div>
+              <p class="message-title">
+                To ${message.receiver}
+                <span class="status">
+                  <i aria-hidden="true" class="fa fa-envelope-o"></i>
+                </span>
+                <time>
+                  ${message.time}
+                </time>
+              </p>
+              <div class="message-content">
+                ${message.content}
+              </div>
+            </li>`;
   }
 
   // end sync message

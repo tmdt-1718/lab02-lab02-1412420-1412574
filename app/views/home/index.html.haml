@@ -43,11 +43,11 @@
                   %time
                     = time_ago(message.sent_at)
                   %i.fa.fa-globe{"aria-hidden" => "true"}
-                %p.message-content
+                %div.message-content
                   = raw short_content(message)
 
         #s-messages.tab-pane.fade
-          %ul.list-messages
+          %ul#list-s-messages.list-messages
             - @sent_messages.each do |message|
               %li.message.message-send{class: unread_class(message), data: {read: message.read.to_s, message: {id: message.id}}}
                 .date
@@ -69,7 +69,7 @@
                     %time
                       = time_ago(message.read_at)
                     %i.fa.fa-globe{"aria-hidden" => "true"}
-                %p.message-content
+                %div.message-content
                   = short_content(message)
         #users.tab-pane.fade
           %ul.list-users

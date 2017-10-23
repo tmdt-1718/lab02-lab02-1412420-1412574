@@ -30,6 +30,15 @@ class Message < ApplicationRecord
     }
     message.messages << message_content
     message.save!
+    {
+      id: id,
+      sender_id: sender_id,
+      receiver_id: receiver_id,
+      content: content,
+      read: read,
+      sent_at: sent_at,
+      read_at: read_at
+    }
   end
   
   def self.update_message(id: , sender: , receiver:, content:, read: , sent_at:, read_at:) 
@@ -45,5 +54,14 @@ class Message < ApplicationRecord
     this_message['sent_at'] = sent_at
     this_message['read_at'] = read_at
     message.save
+    {
+      id: id,
+      sender_id: sender_id,
+      receiver_id: receiver_id,
+      content: content,
+      read: read,
+      sent_at: sent_at,
+      read_at: read_at
+    }
   end 
 end
