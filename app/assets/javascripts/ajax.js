@@ -1,15 +1,17 @@
 $(document).ready(function(e) {
   // ============ BTN ADD FRIEND
-  function ajaxFriend(btnFriend, postUrl, content, addClass, removeClass) {
+  function ajaxFriend(btnFriend, type, content, addClass, removeClass) {
     btnFriend.prop('disabled', true);
     var userId = btnFriend.attr('data-user');
     var friendId = btnFriend.attr('data-id');
     var data = {
-      userId: userId,
-      friendId: friendId
+      user_id: userId,
+      friend_id: friendId,
+      type: type
     }
+    var url = '/api/v1/users/add_remove_friend';
     $.ajax({
-      url: postUrl,
+      url: url,
       type: "post",
       headers: {
         Accept: "application/json",
@@ -18,6 +20,7 @@ $(document).ready(function(e) {
       data: JSON.stringify(data)
     })
     .done(function(xhr) {
+      console.log(xhr);
       if(xhr.ok) {
         btnFriend.html('<p>' + content + '</p>');
         btnFriend.removeClass(removeClass);
@@ -35,81 +38,85 @@ $(document).ready(function(e) {
   $('#users').on('click', '.btn-friend-add', function(e) {
     var btnFriend = $(this);
     e.preventDefault();
-    ajaxFriend(btnFriend, '/user/add_friend', 'Remove', 'btn-friend-remove', 'btn-friend-add');
+    ajaxFriend(btnFriend, 1, 'Remove', 'btn-friend-remove', 'btn-friend-add');
   });
   //remove
   $('#users').on('click', '.btn-friend-remove', function(e) {
     var btnFriend = $(this);
     e.preventDefault();
-    ajaxFriend(btnFriend, '/user/remove_friend', 'Add', 'btn-friend-add', 'btn-friend-remove');
+    ajaxFriend(btnFriend, 0, 'Add', 'btn-friend-add', 'btn-friend-remove');
   });
   // ============ END BTN ADD FRIEND
 
   // ============ update read message
 
-  function handleReceiveUnread(e) {
-    var li = $(this);
+  function handleReceiveUnread(li) {
     var data = {
       uid: li.attr('data-uid'),
       user_id: li.attr('data-user-id')
     }
+    var message_id = li.attr('data-message-id');
+    var url = `/messages/${message_id}/update_read`;
     $.ajax({
-      url: 'messages/update_read',
-      type: "post",
+      url: url,
+      type: 'post',
       headers: {
         Accept: "application/json",
         "Content-Type": "application/json"
-      },
-      data: JSON.stringify(data)
+      }
     })
     .done(function(xhr) {
       if(xhr.ok) {
         li.removeClass("message-unread");
         $("#label-message-modal").html("From");
-        $("#r-status-" + xhr.message.uid).html('<i class="fa fa-envelope-open-o" aria-hidden="true"></i>');
-        $("#read-message-modal #send-from").val(xhr.message.sName);
-        $("#read-message-modal #message-from").html('from ' + xhr.message.sName);
-        var time = new Date(xhr.message.uid);
-        time = time.toLocaleString();
-        $("#read-message-modal #send-from-time").val(time);
-        $("#read-message-modal .note-editable.panel-body").html(xhr.message.message);
+        $("#r-status-" + xhr.message.id).html('<i class="fa fa-envelope-open-o" aria-hidden="true"></i>');
+        $("#read-message-modal #send-from").val(xhr.message.sender);
+        $("#read-message-modal #message-from").html('from ' + xhr.message.sender);
+
+        $("#read-message-modal #send-from-time").val(xhr.message.sent_ago);
+        $("#read-message-modal .note-editable.panel-body").html(xhr.message.content);
 
         $("#read-message-modal").modal();
+        li.attr("data-read", true);
       }
     })
     .fail(function(error) {
       console.log(error);
     });
   }
-  $(".list-messages").on('click', '.message-receive', handleReceiveUnread);
+
+  $(".list-messages").on('click', '.message-receive', function(e) {
+    var read = $(this).attr("data-read") == 'true' ? true : false;
+    if(read) { 
+      toastr['error']("This message has already read");
+      return;
+    }
+    handleReceiveUnread($(this));
+  });
   // ============ end update read message
 
   // send message
 
   $(".list-messages").on('click', '.message-send', function(e) {
     var li = $(this);
-    var data = {
-      uid: li.attr('data-uid'),
-      user_id: li.attr('data-user-id')
-    }
+    var message_id = li.attr('data-message-id');
+    var url = `/messages/${message_id}/message`;
     $.ajax({
-      url: 'messages/get_send_message',
-      type: "post",
+      url: url,
+      type: "get",
       headers: {
         Accept: "application/json",
         "Content-Type": "application/json"
-      },
-      data: JSON.stringify(data)
+      }
     })
     .done(function(xhr) {
       if(xhr.ok) {
         $("#label-message-modal").html("To");
-        $("#read-message-modal #send-from").val(xhr.message.rName);
-        $("#read-message-modal #message-from").html('to ' + xhr.message.rName);
-        var time = new Date(xhr.message.uid);
-        time = time.toLocaleString();
-        $("#read-message-modal #send-from-time").val(time);
-        $("#read-message-modal .note-editable.panel-body").html(xhr.message.message);
+        $("#read-message-modal #send-from").val(xhr.message.receiver);
+        $("#read-message-modal #message-from").html('to ' + xhr.message.receiver);
+
+        $("#read-message-modal #send-from-time").val(xhr.message.sent_ago);
+        $("#read-message-modal .note-editable.panel-body").html(xhr.message.content);
 
         $("#read-message-modal").modal();
       }
@@ -124,9 +131,11 @@ $(document).ready(function(e) {
   // ============ get all friend
   $("#btn-compose-message").on('click', function(e) {
     selectize.clearOptions();
+    var user_id = $(this).attr('data-user-id');
+    var url = `/api/v1/users/${user_id}/get_all_friends`;
     $.ajax({
-      url: 'user/get_all_friend',
-      type: "post",
+      url: url,
+      type: "get",
       headers: {
         Accept: "application/json",
         "Content-Type": "application/json"
@@ -136,7 +145,7 @@ $(document).ready(function(e) {
       console.log(xhr);
       if(xhr.ok) {
         var options = [];
-        var users = JSON.parse(xhr.users);
+        var users = xhr.message;
         selectize.addOption(users);
       }
     })
@@ -160,10 +169,10 @@ $(document).ready(function(e) {
       var arrInput = input.split(",");
       var data = {
         users: arrInput,
-        message: content
+        content: content
       }
       $.ajax({
-        url: 'messages/send',
+        url: 'messages/send_message',
         type: "post",
         headers: {
           Accept: "application/json",
@@ -179,6 +188,13 @@ $(document).ready(function(e) {
           errors.html("Message send successfully");
           divContent.html("");
           selectize.clear();
+          var ul = $("#list-s-messages");
+          for(var index in xhr.message) {
+            var message = xhr.message[index];
+            var html_build = createSendMessage(message);
+            ul.prepend($(html_build));
+          }
+
         } else {
           errors.show();
           errors.css("color", "red");
@@ -204,10 +220,10 @@ $(document).ready(function(e) {
   // sync message
   $("#btn-sync").click(function(e) {
     var btn = $(this);
-    btn.html('<img src="images/load.gif">');
+    btn.html('<img src="https://easeofdoingbusinessinassam.in/images/loading.gif">');
     $.ajax({
       url: 'messages/get_all_receive_message',
-      type: "post",
+      type: "get",
       headers: {
         Accept: "application/json",
         "Content-Type": "application/json"
@@ -216,12 +232,21 @@ $(document).ready(function(e) {
     .done(function(xhr){
       console.log(xhr);
       if(xhr.ok) {
-        var messages = xhr.messages;
-        var l = messages.length;
-        var ul = $("#list-r-messages");
-        ul.html("");
-        for(var i = 0 ; i < l ; i++) {
-          ul.append(createLi(messages[i]));
+        var rul = $("#list-r-messages");
+        var sul = $("#list-s-messages");
+        rul.html("");
+        sul.html("");
+        var received_messages = xhr.message.received_messages;
+        var sent_messages = xhr.message.sent_messages;
+        for(var index in received_messages) {
+          var message = received_messages[index];
+          var html_build = createReceivedMessage(message);
+          rul.append($(html_build));
+        }
+        for(var index in sent_messages) {
+          var message = sent_messages[index];
+          var html_build = createSendMessage(message);
+          sul.append($(html_build));
         }
       }
     })
@@ -233,28 +258,56 @@ $(document).ready(function(e) {
     });
   });
 
-  function createLi(message) {
-    var monthNames = ["Jan", "Feb", "Mar", "Apr", "May", "Jun",
-      "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"
-    ];
-    var unread = message.read == 0 ? 'message-unread' : '';
-    var date = new Date(message.time);
-    var d = date.getDate();
-    var m = monthNames[date.getMonth()];
-    var readDate = new Date(message.uid);
-    var timeAgo = jQuery.timeago(message.uid);
-    var content = jQuery.truncate(message.message, {
-      length: 300,
-      stripTags: true
-    });
-    var li = $(`<li class="message message-receive ${unread}" data-uid="${message.uid}" data-user-id="${message.sUser}" data-user-name="${message.sName}" data-receive-time="${readDate}"></li>`);
-    var div = (`<div class="date"><span>${d}</span><span class="small">${m}</span></div>`);
-    var pTitle = $(`<p class="message-title">From ${message.sName}&nbsp;<span class="status" id="r-status-${message.uid}"><i class="fa fa-envelope-open-o" aria-hidden="true"></i></span>&nbsp;<time class="timeago" datetime="${readDate}" title="${readDate}">${timeAgo} </time>&bull;&nbsp;<i class="fa fa-globe" aria-hidden="true"></i></p>`)
-    var pContent = $(`<p class="message-content">${content}</p>`)
-    li.append(div);
-    li.append(pTitle);
-    li.append(pContent);
-    return li;
+  function createReceivedMessage(message) {
+    var read_class = message.read ? '' : 'message-unread';
+    var evelop_icon = message.read ? '<i aria-hidden="true" class="fa fa-envelope-open-o"></i>' : '<i aria-hidden="true" class="fa fa-envelope-o"></i>';
+    return ` <li class="message message-receive ${read_class}" data-message-id="${message.id}" data-read="${message.read}">
+              <div class="date">
+                <span> ${message.day} </span>
+                <span class="small"> ${message.month} </span>
+              </div>
+              <p class="message-title">
+                From ${message.sender}
+                <span class="status" id="r-status-${message.id}">
+                  ${evelop_icon}
+                </span>
+                <time> ${message.time_ago} </time>
+                <i aria-hidden="true" class="fa fa-globe"></i>
+              </p>
+              <div class="message-content">
+                ${message.content}
+              </div>
+            </li>`;
+  }
+
+  function createSendMessage(message) {
+    var read_class = message.read ? '' : 'message-unread';
+    var evelop_icon = message.read ? '<i aria-hidden="true" class="fa fa-envelope-open-o"></i>' : '<i aria-hidden="true" class="fa fa-envelope-o"></i>';
+    var time = message.read ? `&bull; Seen <time> ${message.read_ago} </time>` : '';
+    return `<li class="message message-send ${read_class}" data-message-id="${message.id}" data-read="${message.read}">
+              <div class="date">
+                <span>
+                  ${message.day}
+                </span>
+                <span class="small">
+                  ${message.month}
+                </span>
+              </div>
+              <p class="message-title">
+                To ${message.receiver}
+                <span class="status">
+                  ${evelop_icon}
+                </span>
+                <time>
+                  ${message.time}
+                </time>
+                ${time}
+                <i aria-hidden="true" class="fa fa-globe"></i>
+              </p>
+              <div class="message-content">
+                ${message.content}
+              </div>
+            </li>`;
   }
 
   // end sync message

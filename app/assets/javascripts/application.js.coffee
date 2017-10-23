@@ -20,6 +20,8 @@
 #= require display
 #= require style
 #= require modal
+#= require toastr_customed
+#
 
 document.addEventListener 'turbolinks:load', ->
   Display.initDisplay()

@@ -6,7 +6,7 @@
 .main-content
   .left-main-content.col-md-3
     .function-use
-      %button#btn-compose-message.btn-standard.btn-compose{"data-target" => "#send-message-modal", "data-toggle" => "modal"} Compose
+      %button#btn-compose-message.btn-standard.btn-compose{"data-target" => "#send-message-modal", "data-toggle" => "modal", data: {user: { id: current_user.id}}} Compose
   
   .center-main-content.col-md-9
     .tab-content-c
@@ -26,72 +26,67 @@
       #tab-selection-content.tab-content
         #r-messages.tab-pane.fade.in.active
           %ul#list-r-messages.list-messages
-            {{#each rMessages as |value|}}
-            = succeed "{{" do
-              %li.message.message-receive.message-unread{:class => "{{#unless value.read}} {{/unless}}"}
-            .date
-              %span {{ getDate value.time }}
-              %span.small {{ getMonth value.time }}
-            %p.message-title
-              From {{ value.sName }}
-              %span.status{:id => "r-status-{{ value.uid }}"}
-                {{#if value.read }}
-                %i.fa.fa-envelope-open-o{"aria-hidden" => "true"}
-                {{else}}
-                %i.fa.fa-envelope-o{"aria-hidden" => "true"}
-                {{/if}}
-              %time.timeago{:datetime => "{{ value.time }}"} {{ value.time }}
-              %i.fa.fa-globe{"aria-hidden" => "true"}
-            %p.message-content
-              {{{ truncatise value.message }}}
-          {{/each}}
-          {{!--  --}}
-          
-          {{!--  --}}
+            - @received_messages.each do |message|
+              %li.message.message-receive{class: unread_class(message), data: {read: message.read.to_s, message: {id: message.id}}}
+                .date
+                  %span 
+                    = message.sent_at.day
+                  %span.small
+                    = three_chars_month(message.sent_at)
+                %p.message-title
+                  From #{message.sender.name}
+                  %span.status{:id => "r-status-#{message.id}"}
+                    - if message.read?
+                      %i.fa.fa-envelope-open-o{"aria-hidden" => "true"}
+                    - else 
+                      %i.fa.fa-envelope-o{"aria-hidden" => "true"}
+                  %time
+                    = time_ago(message.sent_at)
+                  %i.fa.fa-globe{"aria-hidden" => "true"}
+                %div.message-content
+                  = raw short_content(message)
+
         #s-messages.tab-pane.fade
-          %ul.list-messages
-            {{#each sMessages as |value|}}
-            = succeed "{{" do
-              %li.message.message-send.message-unread{:class => "{{#unless value.read}} {{/unless}}"}
-            .date
-              %span 13
-              %span.small May
-            %p.message-title
-              To {{ value.rName }}
-              %span.status
-                {{#if value.read }}
-                %i.fa.fa-envelope-open-o{"aria-hidden" => "true"}
-                {{else}}
-                %i.fa.fa-envelope-o{"aria-hidden" => "true"}
-                {{/if}}
-              %time{:datetime => "{{ value.time }}"} {{ getStandardTime value.time }}
-              {{#if value.read }}
-              Seen
-              %time.timeago{:datetime => "{{ value.readTime }}"} {{ value.rTime }}
-              {{/if}}
-              %i.fa.fa-globe{"aria-hidden" => "true"}
-            %p.message-content
-              {{{ truncatise value.message }}}
-          {{/each}}
-          {{!--  --}}
-          
-          {{!--  --}}
+          %ul#list-s-messages.list-messages
+            - @sent_messages.each do |message|
+              %li.message.message-send{class: unread_class(message), data: {read: message.read.to_s, message: {id: message.id}}}
+                .date
+                  %span
+                    = message.sent_at.day
+                  %span.small
+                    = three_chars_month(message.sent_at)
+                %p.message-title
+                  To #{message.receiver.name}
+                  %span.status
+                    - if message.read?
+                      %i.fa.fa-envelope-open-o{"aria-hidden" => "true"}
+                    - else 
+                      %i.fa.fa-envelope-o{"aria-hidden" => "true"}
+                  %time
+                    = standard_time(message.sent_at)
+                  - if message.read?
+                    &bull; Seen
+                    %time
+                      = time_ago(message.read_at)
+                  %i.fa.fa-globe{"aria-hidden" => "true"}
+                %div.message-content
+                  = short_content(message)
         #users.tab-pane.fade
           %ul.list-users
-            {{#each users as |user| }}
-            %li.user
-              .avatar-user
-                %img{:src => "{{ user.avatar }}"}
+            - @all_user.each do |user|
+              %li.user
+                .avatar-user
+                  = user.decorate.user_thumb_avatar
                 %p.user-content
-                  %a{:href => "#"} {{ user.name }}
-                {{#if user.isFriend }}
-                %button.btn-friend.btn-friend-remove{"data-id" => "{{ user.id }}", "data-sign" => "{{ user.isFriend }}", "data-user" => "{{ ../currentUser.id }}"}
-                  %p Remove
-                {{else}}
-                %button.btn-friend.btn-friend-add{"data-id" => "{{ user.id }}", "data-sign" => "{{ user.isFriend }}", "data-user" => "{{ ../currentUser.id }}"}
-                  %p Add
-                {{/if}}
-              {{/each}}
-
+                  = link_to user.name, '#'
+                - is_friend = current_user.friend?(user)
+                - p "user: #{current_user.name} - friend: #{user.name}: #{is_friend}"
+                - if is_friend
+                  %button.btn-friend.btn-friend-remove{data: { id: user.id, sign: is_friend.to_s, user: current_user.id }}
+                    %p Remove
+                - else 
+                  %button.btn-friend.btn-friend-add{data: { id: user.id, sign: is_friend.to_s, user: current_user.id }}
+                    %p Add
 
 = render 'modals'
+= javascript_include_tag 'ajax', data: {'turbolinks-track' => true}
