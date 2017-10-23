@@ -243,7 +243,6 @@ $(document).ready(function(e) {
           var html_build = createReceivedMessage(message);
           rul.append($(html_build));
         }
-        debugger
         for(var index in sent_messages) {
           var message = sent_messages[index];
           var html_build = createSendMessage(message);
