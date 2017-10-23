@@ -3,5 +3,8 @@ resources :messages do
     post 'update_read'
     get 'message'
   end 
-  post 'send_message', on: :collection
+  collection do 
+    post 'send_message'
+    get 'get_all_receive_message'
+  end
 end

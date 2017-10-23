@@ -30,10 +30,14 @@ class UserMessage
   end 
 
   def save
+    new_info = {}
     if(self.id)
-      Message.update_message(id: self.id, sender: self.sender, receiver: self.receiver, content: self.content, read: self.read, sent_at: self.sent_at, read_at: self.read_at)
+      new_info = Message.update_message(id: self.id, sender: self.sender, receiver: self.receiver, content: self.content, read: self.read, sent_at: self.sent_at, read_at: self.read_at)
     else 
-      Message.create_message(id: self.id, sender: self.sender, receiver: self.receiver, content: self.content, read: self.read, sent_at: self.sent_at, read_at: self.read_at)
+      new_info = Message.create_message(id: self.id, sender: self.sender, receiver: self.receiver, content: self.content, read: self.read, sent_at: self.sent_at, read_at: self.read_at)
+    end 
+    new_info.each do |k, v|
+      self.send("#{k}=", v)
     end 
   end
 

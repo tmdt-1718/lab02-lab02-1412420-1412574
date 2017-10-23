@@ -73,15 +73,15 @@ class User < ApplicationRecord
     end
   end 
 
-  def received_messages(sort = false)
+  def received_messages(sort = :desc)
     @received_messages ||= selected_messages(:receiver_id)
-    return @received_messages.sort { |a, b| b.sent_at <=> a.sent_at } if sort
+    return @received_messages.sort { |a, b| sort == :asc ? a.sent_at <=> b.sent_at : b.sent_at <=> a.sent_at } if sort
     @received_messages
   end
   
-  def sent_messages(sort = false)
+  def sent_messages(sort = :desc)
     @sent_messages ||= selected_messages(:sender_id)
-    return @sent_messages.sort { |a, b| b.sent_at <=> a.sent_at } if sort
+    return @sent_messages.sort { |a, b| sort == :asc ? a.sent_at <=> b.sent_at : b.sent_at <=> a.sent_at } if sort
     @sent_messages
   end
 

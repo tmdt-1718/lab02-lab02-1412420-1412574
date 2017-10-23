@@ -17,6 +17,6 @@ module UserMessageHelper
   end 
 
   def standard_time(time)
-    time.strftime("%I:%M:%S%p")
+    time.strftime("%r")
   end 
 end 
