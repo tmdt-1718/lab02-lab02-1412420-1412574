@@ -14,8 +14,9 @@
 				.options-opt
 					%a#opt-info-clk.opt-info{"data-indicate" => "close"}
 						= current_user.decorate.user_thumb_avatar
-						%span
-							= current_user.name
+						%span.usr-name
+							%p#user-name 
+								= current_user.name
 							%i.fa.fa-caret-down
 					.avatar-info
 						%ul

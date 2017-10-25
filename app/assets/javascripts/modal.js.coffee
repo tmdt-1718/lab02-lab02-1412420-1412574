@@ -93,19 +93,10 @@ class window.Modal
         'email'
       ]
       options: [
-        {id: 1, email: 'brian@thirdroute.com', name: 'Brian Reavis'},
-        {id: 2, email: 'nikola@tesla.com', name: 'Nikola Tesla'},
-        {id: 3, email: 'someone@gmail.com'},
-        {id: 4, email: 'brian@thirdroute.com', name: 'As'},
-        {id: 5, email: 'nikola@tesla.com', name: 'Nikola dwd w '},
-        {id: 6, email: 'someone@gmail.com'},
-        {id: 7, email: 'brian@thirdroute.com', name: 'dwa dwa'},
-        {id: 8, email: 'nikola@tesla.com', name: 'Nikola  WWWWW'},
-        {id: 9, email: 'someone@gmail.com dwaw d'}
       ],
       render:
         item: (item, escape) ->
-          '<div>' + (if item.name then '<span class="name">' + escape(item.name) + '</span>' else '') + (if item.email then '<span class="email">' + escape(item.email) + '</span>' else '') + '</div>'
+          '<div>' + (if item.name then '<span class="name"><b>' + escape(item.name) + '</b></span> ' else '') + (if item.email then '<span class="email">' + escape(item.email) + '</span>' else '') + '</div>'
         option: (item, escape) ->
           label = item.name or item.email
           caption = if item.name then item.email else null
@@ -136,4 +127,4 @@ class window.Modal
         alert 'Invalid email address.'
         false
     )
-    selectize = $select[0].selectize
+    window.selectize = $select[0].selectize

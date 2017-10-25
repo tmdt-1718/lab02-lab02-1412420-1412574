@@ -120,10 +120,18 @@ body {
             border-radius: 50%;
             margin-top: 3px;
           }
-          span {
+          span.usr-name {
             float: left;
             line-height: 50px;
             margin-left: 5px;
+            height: 100%;
+            p#user-name {
+              width: 40px;
+              overflow: hidden;
+              text-overflow: ellipsis;
+              white-space: nowrap; 
+              float: left;
+            }
           }
         }
         .avatar-info {
